@@ -1,6 +1,7 @@
 import { ArrowRight, BookOpen, CheckCircle2, Copy, Zap, BarChart3, Users, FileText } from 'lucide-react';
 import FAQ from '@/components/FAQ';
 import NewsletterSignup from '@/components/NewsletterSignup';
+import RecommendedReading from '@/components/RecommendedReading';
 
 export default function Landing() {
   const handleStartGuide = () => {
@@ -329,6 +330,9 @@ export default function Landing() {
 
       {/* Newsletter Signup */}
       <NewsletterSignup />
+
+      {/* Recommended Reading */}
+      <RecommendedReading />
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-white">
