@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Chapter, ChecklistItem as ChecklistItemType } from '@/lib/chapters';
 
@@ -10,24 +10,34 @@ interface ChapterContentProps {
 export default function ChapterContent({ chapter, onChapterComplete }: ChapterContentProps) {
   const [checklist, setChecklist] = useState<Set<string>>(new Set());
   const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null);
+  const completedRef = useRef<boolean>(false);
 
   // Load checklist from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(`checklist-${chapter.id}`);
     if (saved) {
       setChecklist(new Set(JSON.parse(saved)));
+    } else {
+      setChecklist(new Set());
     }
+    completedRef.current = false;
   }, [chapter.id]);
 
-  // Save checklist to localStorage
+  // Save checklist to localStorage and check completion
   useEffect(() => {
     localStorage.setItem(`checklist-${chapter.id}`, JSON.stringify(Array.from(checklist)));
     
     // Check if all items are completed
-    if (chapter.checklist && checklist.size === chapter.checklist.length && checklist.size > 0) {
+    const isComplete = chapter.checklist && checklist.size === chapter.checklist.length && checklist.size > 0;
+    
+    // Only call callback once when completion state changes
+    if (isComplete && !completedRef.current) {
+      completedRef.current = true;
       onChapterComplete(chapter.id);
+    } else if (!isComplete && completedRef.current) {
+      completedRef.current = false;
     }
-  }, [checklist, chapter, onChapterComplete]);
+  }, [checklist, chapter.id, chapter.checklist, onChapterComplete]);
 
   const toggleChecklistItem = (itemId: string) => {
     setChecklist(prev => {
