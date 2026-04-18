@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, CheckCircle2, Copy, Zap, BarChart3, Users, FileText } from 'lucide-react';
+import FAQ from '@/components/FAQ';
 
 export default function Landing() {
   const handleStartGuide = () => {
@@ -321,6 +322,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQ />
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-white">
