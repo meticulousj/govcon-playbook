@@ -1,24 +1,66 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { useState, useEffect } from 'react';
+import Sidebar from '@/components/Sidebar';
+import ChapterContent from '@/components/ChapterContent';
+import ChapterNav from '@/components/ChapterNav';
+import { chapters } from '@/lib/chapters';
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+  const [currentChapterId, setCurrentChapterId] = useState('intro');
+  const [completedChapters, setCompletedChapters] = useState<Set<string>>(new Set());
+
+  // Load completed chapters from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('completed-chapters');
+    if (saved) {
+      setCompletedChapters(new Set(JSON.parse(saved)));
+    }
+  }, []);
+
+  // Save completed chapters to localStorage
+  useEffect(() => {
+    localStorage.setItem('completed-chapters', JSON.stringify(Array.from(completedChapters)));
+  }, [completedChapters]);
+
+  const handleChapterComplete = (chapterId: string) => {
+    setCompletedChapters(prev => {
+      const newSet = new Set(prev);
+      newSet.add(chapterId);
+      return newSet;
+    });
+  };
+
+  const currentChapter = chapters.find(ch => ch.id === currentChapterId);
+
+  if (!currentChapter) {
+    return <div>Chapter not found</div>;
+  }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
+    <div className="flex h-screen bg-background">
+      {/* Sidebar */}
+      <Sidebar
+        currentChapterId={currentChapterId}
+        onChapterSelect={setCurrentChapterId}
+        completedChapters={completedChapters}
+      />
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto lg:ml-0">
+        <div className="bg-background">
+          {/* Chapter Content */}
+          <ChapterContent
+            chapter={currentChapter}
+            onChapterComplete={handleChapterComplete}
+          />
+
+          {/* Chapter Navigation */}
+          <div className="max-w-4xl mx-auto px-4 lg:px-0 pb-8">
+            <ChapterNav
+              currentChapterId={currentChapterId}
+              onChapterSelect={setCurrentChapterId}
+            />
+          </div>
+        </div>
       </main>
     </div>
   );
