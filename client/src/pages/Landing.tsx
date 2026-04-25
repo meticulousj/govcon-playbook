@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, CheckCircle2, Copy, Zap, BarChart3, Users, FileTe
 import FAQ from '@/components/FAQ';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import RecommendedReading from '@/components/RecommendedReading';
+import Testimonials from '@/components/Testimonials';
 
 export default function Landing() {
   const handleStartGuide = () => {
@@ -333,6 +334,9 @@ export default function Landing() {
 
       {/* Recommended Reading */}
       <RecommendedReading />
+
+      {/* Testimonials */}
+      <Testimonials />
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-white">
